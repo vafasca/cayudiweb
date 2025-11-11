@@ -1,0 +1,68 @@
+<div class="recovery-container">
+  <div class="recovery-card">
+    <div class="recovery-header">
+      <div class="logo">
+        <svg width="50" height="50" viewBox="0 0 50 50" fill="none">
+          <circle cx="25" cy="25" r="23" stroke="#1E73BE" stroke-width="3"/>
+          <path d="M25 10 L25 40 M10 25 L40 25" stroke="#1E73BE" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <h1>Cayudi</h1>
+      </div>
+      <h2>Recuperar Contraseña</h2>
+      <p class="instructions">Te enviaremos un enlace de recuperación a tu correo electrónico</p>
+    </div>
+
+    <form class="recovery-form" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="email">Correo Electrónico de Registro</label>
+        <div class="input-wrapper">
+          <svg class="input-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M3 4h14a1 1 0 011 1v10a1 1 0 01-1 1H3a1 1 0 01-1-1V5a1 1 0 011-1z" stroke="#666666" stroke-width="1.5"/>
+            <path d="M2 5l8 6 8-6" stroke="#666666" stroke-width="1.5"/>
+          </svg>
+          <input
+            type="email"
+            id="email"
+            [(ngModel)]="email"
+            name="email"
+            placeholder="tu@email.com"
+            [class.error]="errorMessage"
+          />
+        </div>
+      </div>
+
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
+      <button type="submit" class="btn-primary" [disabled]="isLoading">
+        <span *ngIf="!isLoading">Enviar Enlace de Recuperación</span>
+        <span *ngIf="isLoading" class="loading">Enviando...</span>
+      </button>
+    </form>
+
+    <div class="recovery-links">
+      <a (click)="goToLogin()" class="link">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        Volver al login
+      </a>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="showModal" class="modal-overlay" (click)="closeModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-icon">
+      <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+        <circle cx="30" cy="30" r="28" fill="#E8F5E9"/>
+        <path d="M18 30l8 8 16-16" stroke="#4CAF50" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h3>¡Correo Enviado!</h3>
+    <p>Revisa tu bandeja de entrada. Te hemos enviado un enlace para restablecer tu contraseña.</p>
+    <p class="modal-note">Si no recibes el correo en unos minutos, revisa tu carpeta de spam.</p>
+    <button class="btn-primary" (click)="closeModal()">Entendido</button>
+  </div>
+</div>

@@ -1,0 +1,108 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="logo">
+        <svg width="50" height="50" viewBox="0 0 50 50" fill="none">
+          <circle cx="25" cy="25" r="23" stroke="#1E73BE" stroke-width="3"/>
+          <path d="M25 10 L25 40 M10 25 L40 25" stroke="#1E73BE" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <h1>Cayudi</h1>
+      </div>
+      <p class="tagline">Campus Virtual en Salud</p>
+    </div>
+
+    <form class="login-form" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="email">Correo Electrónico</label>
+        <div class="input-wrapper">
+          <svg class="input-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M3 4h14a1 1 0 011 1v10a1 1 0 01-1 1H3a1 1 0 01-1-1V5a1 1 0 011-1z" stroke="#666666" stroke-width="1.5"/>
+            <path d="M2 5l8 6 8-6" stroke="#666666" stroke-width="1.5"/>
+          </svg>
+          <input
+            type="email"
+            id="email"
+            [(ngModel)]="email"
+            name="email"
+            placeholder="tu@email.com"
+            [class.error]="errorMessage"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <div class="input-wrapper">
+          <svg class="input-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <rect x="4" y="9" width="12" height="9" rx="1" stroke="#666666" stroke-width="1.5"/>
+            <path d="M7 9V6a3 3 0 116 0v3" stroke="#666666" stroke-width="1.5"/>
+          </svg>
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            id="password"
+            [(ngModel)]="password"
+            name="password"
+            placeholder="Ingresa tu contraseña"
+            [class.error]="errorMessage"
+          />
+          <button
+            type="button"
+            class="toggle-password"
+            (click)="togglePasswordVisibility()"
+            tabindex="-1"
+          >
+            <svg *ngIf="!showPassword" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M10 4C5 4 2 10 2 10s3 6 8 6 8-6 8-6-3-6-8-6z" stroke="#666666" stroke-width="1.5"/>
+              <circle cx="10" cy="10" r="2" stroke="#666666" stroke-width="1.5"/>
+            </svg>
+            <svg *ngIf="showPassword" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M2 2l16 16M10 7a3 3 0 013 3m-6 0a3 3 0 003 3" stroke="#666666" stroke-width="1.5"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-options">
+        <label class="checkbox-label">
+          <input
+            type="checkbox"
+            [(ngModel)]="rememberMe"
+            name="rememberMe"
+          />
+          <span>Recordar sesión</span>
+        </label>
+      </div>
+
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
+      <button type="submit" class="btn-primary" [disabled]="isLoading">
+        <span *ngIf="!isLoading">Ingresar al Campus</span>
+        <span *ngIf="isLoading" class="loading">Ingresando...</span>
+      </button>
+
+      <div class="demo-credentials">
+        <p class="demo-title">Credenciales de prueba:</p>
+        <p><strong>Estudiante:</strong> estudiante&#64;cayudi.com / estudiante123</p>
+        <p><strong>Instructor:</strong> instructor&#64;cayudi.com / instructor123</p>
+        <p><strong>Admin:</strong> admin&#64;cayudi.com / admin123</p>
+      </div>
+    </form>
+
+    <div class="login-links">
+      <a (click)="goToRecovery()" class="link">¿Olvidaste tu contraseña?</a>
+      <a href="#" class="link">¿No tienes cuenta? Regístrate aquí</a>
+      <a href="#" class="link secondary">Acceder como invitado</a>
+    </div>
+
+    <footer class="login-footer">
+      <p>&copy; 2024 Cayudi. Todos los derechos reservados.</p>
+      <div class="social-links">
+        <a href="#" aria-label="Facebook">FB</a>
+        <a href="#" aria-label="Twitter">TW</a>
+        <a href="#" aria-label="LinkedIn">IN</a>
+      </div>
+    </footer>
+  </div>
+</div>

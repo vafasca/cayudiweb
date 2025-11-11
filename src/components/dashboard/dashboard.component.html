@@ -1,0 +1,312 @@
+<div class="dashboard-container" (click)="closeAllMenus()">
+  <header class="top-bar">
+    <div class="logo">
+      <svg width="40" height="40" viewBox="0 0 50 50" fill="none">
+        <circle cx="25" cy="25" r="23" stroke="#1E73BE" stroke-width="3"/>
+        <path d="M25 10 L25 40 M10 25 L40 25" stroke="#1E73BE" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+      <span>Cayudi</span>
+    </div>
+
+    <div class="top-bar-actions">
+      <div class="icon-button" (click)="toggleNotifications(); $event.stopPropagation()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M18 8A6 6 0 1 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span *ngIf="notificationCount > 0" class="badge">{{ notificationCount }}</span>
+
+        <div *ngIf="showNotifications" class="dropdown-menu" (click)="$event.stopPropagation()">
+          <div class="dropdown-header">
+            <h3>Notificaciones</h3>
+            <button class="text-btn">Marcar todas como leídas</button>
+          </div>
+          <div class="notification-item">
+            <div class="notification-icon new">📚</div>
+            <div class="notification-content">
+              <p class="notification-title">Nuevo módulo disponible</p>
+              <p class="notification-text">Módulo 4 desbloqueado en Sonoanatomía</p>
+              <p class="notification-time">Hace 2 horas</p>
+            </div>
+          </div>
+          <div class="notification-item">
+            <div class="notification-icon">✅</div>
+            <div class="notification-content">
+              <p class="notification-title">Tarea calificada</p>
+              <p class="notification-text">Caso clínico: 95/100</p>
+              <p class="notification-time">Hace 5 horas</p>
+            </div>
+          </div>
+          <div class="notification-item">
+            <div class="notification-icon">🎓</div>
+            <div class="notification-content">
+              <p class="notification-title">Certificado disponible</p>
+              <p class="notification-text">Descarga tu certificado de Módulo 2</p>
+              <p class="notification-time">Hace 1 día</p>
+            </div>
+          </div>
+          <div class="dropdown-footer">
+            <button class="text-btn">Ver todas las notificaciones</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="icon-button" (click)="toggleMessages(); $event.stopPropagation()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span *ngIf="messageCount > 0" class="badge">{{ messageCount }}</span>
+
+        <div *ngIf="showMessages" class="dropdown-menu" (click)="$event.stopPropagation()">
+          <div class="dropdown-header">
+            <h3>Mensajes</h3>
+          </div>
+          <div class="message-item">
+            <div class="message-avatar">DR</div>
+            <div class="message-content">
+              <p class="message-name">Dr. Rodríguez</p>
+              <p class="message-text">Excelente trabajo en el caso clínico...</p>
+              <p class="message-time">Hace 1 hora</p>
+            </div>
+          </div>
+          <div class="message-item">
+            <div class="message-avatar">MG</div>
+            <div class="message-content">
+              <p class="message-name">María García</p>
+              <p class="message-text">¿Tienes dudas sobre el módulo 3?</p>
+              <p class="message-time">Hace 3 horas</p>
+            </div>
+          </div>
+          <div class="dropdown-footer">
+            <button class="text-btn">Ver todos los mensajes</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="user-menu-wrapper">
+        <div class="user-button" (click)="toggleUserMenu(); $event.stopPropagation()">
+          <div class="user-avatar">JP</div>
+          <span class="user-name">{{ currentUser?.name }}</span>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <div *ngIf="showUserMenu" class="dropdown-menu" (click)="$event.stopPropagation()">
+          <div class="user-menu-header">
+            <div class="user-avatar large">JP</div>
+            <div>
+              <p class="user-menu-name">{{ currentUser?.name }}</p>
+              <p class="user-menu-email">{{ currentUser?.email }}</p>
+            </div>
+          </div>
+          <div class="menu-divider"></div>
+          <button class="menu-item" (click)="navigateTo('profile')">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M4 18v-1a6 6 0 0112 0v1" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+            Ver perfil
+          </button>
+          <button class="menu-item" (click)="navigateTo('settings')">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M17 10a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+            Configuración
+          </button>
+          <div class="menu-divider"></div>
+          <button class="menu-item danger" (click)="logout()">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M7 18H4a2 2 0 01-2-2V4a2 2 0 012-2h3M13 14l4-4-4-4M17 10H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            Cerrar sesión
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+        <a class="nav-item active" (click)="navigateTo('dashboard')">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M3 10h6V3H3v7zm0 7h6v-5H3v5zm8 0h6V10h-6v7zm0-14v5h6V3h-6z" fill="currentColor"/>
+          </svg>
+          <span>Dashboard</span>
+        </a>
+        <a class="nav-item" (click)="navigateTo('courses')">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M4 6h12M4 10h12M4 14h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span>Mis Cursos</span>
+        </a>
+        <a class="nav-item" (click)="navigateTo('calendar')">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <rect x="3" y="4" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M7 2v4M13 2v4M3 8h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span>Calendario</span>
+        </a>
+        <a class="nav-item" (click)="navigateTo('evaluations')">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M9 11l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <rect x="4" y="3" width="12" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <span>Evaluaciones</span>
+        </a>
+        <a class="nav-item" (click)="navigateTo('certificates')">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M6 14l2 2 4-2M10 2l3 3h3v3l3 2-3 2v3h-3l-3 3-3-3H4v-3l-3-2 3-2V4h3l3-2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span>Certificados</span>
+        </a>
+        <a class="nav-item" (click)="navigateTo('progress')">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M2 12h4l3-9 4 18 3-9h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span>Mi Progreso</span>
+        </a>
+        <a class="nav-item" (click)="navigateTo('community')">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M4 18v-1a6 6 0 0112 0v1" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <span>Comunidad</span>
+        </a>
+        <a class="nav-item" (click)="navigateTo('forums')">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M17 7a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h10a2 2 0 012 2z" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <span>Foros de Ayuda</span>
+        </a>
+        <a class="nav-item" (click)="navigateTo('settings')">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M17 10a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <span>Configuración</span>
+        </a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <section class="progress-section">
+        <div class="widget">
+          <div class="widget-icon progress-icon">📊</div>
+          <div class="widget-content">
+            <h3>Progreso Semanal</h3>
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width.%]="weeklyProgress"></div>
+            </div>
+            <p class="widget-value">{{ weeklyProgress }}% completado</p>
+          </div>
+        </div>
+
+        <div class="widget">
+          <div class="widget-icon time-icon">⏱️</div>
+          <div class="widget-content">
+            <h3>Tiempo de Estudio</h3>
+            <p class="widget-value large">{{ studyTime }}</p>
+            <p class="widget-label">esta semana</p>
+          </div>
+        </div>
+
+        <div class="widget">
+          <div class="widget-icon achievement-icon">🏆</div>
+          <div class="widget-content">
+            <h3>Logros Desbloqueados</h3>
+            <p class="widget-value large">{{ achievementsUnlocked }}</p>
+            <p class="widget-label">total de 25</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="courses-section">
+        <div class="section-header">
+          <h2>Cursos Activos</h2>
+          <button class="btn-secondary" (click)="navigateTo('courses')">Ver todos</button>
+        </div>
+
+        <div class="courses-grid">
+          <div class="course-card" *ngFor="let course of activeCourses">
+            <div class="course-thumbnail" [style.background]="course.thumbnail">
+              <div class="course-badge">En progreso</div>
+            </div>
+            <div class="course-content">
+              <h3 class="course-title">{{ course.title }}</h3>
+              <p class="course-instructor">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <circle cx="8" cy="5" r="2" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M3 14v-1a5 5 0 0110 0v1" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                {{ course.instructor }}
+              </p>
+              <div class="course-progress">
+                <div class="progress-info">
+                  <span>Progreso</span>
+                  <span class="progress-percent">{{ course.progress }}%</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" [style.width.%]="course.progress"></div>
+                </div>
+              </div>
+              <p class="next-lesson">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                Próxima: {{ course.nextLesson }}
+              </p>
+              <button class="btn-primary" (click)="continueCourse(course.id)">
+                Continuar Aprendiendo
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="activities-section">
+        <div class="section-header">
+          <h2>Próximas Actividades</h2>
+        </div>
+
+        <div class="activities-list">
+          <div class="activity-item" *ngFor="let activity of upcomingActivities">
+            <div class="activity-icon">{{ getActivityIcon(activity.type) }}</div>
+            <div class="activity-content">
+              <h4>{{ activity.title }}</h4>
+              <p class="activity-course">{{ activity.course }}</p>
+            </div>
+            <div class="activity-due">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M8 5v3l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              <span>{{ activity.dueDate }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="recommendations-section">
+        <div class="section-header">
+          <h2>Recomendaciones</h2>
+        </div>
+
+        <div class="recommendations-grid">
+          <div class="recommendation-card" (click)="navigateTo('explore')">
+            <div class="recommendation-icon">🔍</div>
+            <h3>Explorar Nuevos Cursos</h3>
+            <p>Descubre más de 40 cursos disponibles en nuestra plataforma</p>
+          </div>
+
+          <div class="recommendation-card" (click)="navigateTo('community')">
+            <div class="recommendation-icon">👥</div>
+            <h3>Conectar con Compañeros</h3>
+            <p>Únete a grupos de estudio y comparte experiencias</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
