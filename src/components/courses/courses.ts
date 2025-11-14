@@ -7,13 +7,12 @@ interface Course {
   id: string;
   title: string;
   instructor: string;
-  category: string;
   progress: number;
-  status: 'active' | 'completed' | 'upcoming';
+  category: string;
   thumbnail: string;
+  status: 'active' | 'completed' | 'pending';
   timeRemaining: string;
-  nextDeadline?: string;
-  badge: string;
+  dueDate?: string;
 }
 
 @Component({
@@ -24,163 +23,120 @@ interface Course {
   styleUrl: './courses.css'
 })
 export class Courses {
-activeFilter = 'all';
-  categoryFilter = 'all';
-  searchTerm = '';
-  
-  categories = [
-    'Todos',
-    'Ultrasonido',
-    'Diagnóstico',
-    'Ecografía',
-    'Anatomía',
-    'Emergencias'
-  ];
-
-  courses: Course[] = [
+courses: Course[] = [
     {
       id: '1',
       title: 'Diplomado en Sonoanatomía',
       instructor: 'Dr. Rodríguez',
-      category: 'Ultrasonido',
       progress: 65,
-      status: 'active',
+      category: 'Ultrasonido',
       thumbnail: '#4CAF50',
-      timeRemaining: '45h restantes',
-      nextDeadline: '2 días',
-      badge: 'En progreso'
+      status: 'active',
+      timeRemaining: '45h',
+      dueDate: '2 días'
     },
     {
       id: '2',
       title: 'Ecografía Abdominal Avanzada',
       instructor: 'Dra. García',
-      category: 'Ecografía',
-      progress: 42,
-      status: 'active',
+      progress: 100,
+      category: 'Diagnóstico',
       thumbnail: '#2196F3',
-      timeRemaining: '28h restantes',
-      nextDeadline: '5 días',
-      badge: 'En progreso'
+      status: 'completed',
+      timeRemaining: '0h',
+      dueDate: 'Completado'
     },
     {
       id: '3',
       title: 'Ultrasonido en Emergencias',
       instructor: 'Dr. Martínez',
-      category: 'Emergencias',
       progress: 28,
-      status: 'active',
+      category: 'Ultrasonido',
       thumbnail: '#FF9800',
-      timeRemaining: '52h restantes',
-      nextDeadline: '3 días',
-      badge: 'En progreso'
+      status: 'active',
+      timeRemaining: '60h',
+      dueDate: '15 días'
     },
     {
       id: '4',
-      title: 'Curso de Ecografía Ginecológica',
-      instructor: 'Dra. López',
-      category: 'Diagnóstico',
-      progress: 100,
-      status: 'completed',
+      title: 'Fundamentos de Ecografía',
+      instructor: 'Dr. López',
+      progress: 0,
+      category: 'Básico',
       thumbnail: '#9C27B0',
-      timeRemaining: 'Completado',
-      badge: 'Completado'
+      status: 'pending',
+      timeRemaining: '30h',
+      dueDate: 'Por comenzar'
     },
     {
       id: '5',
-      title: 'Fundamentos de Diagnóstico por Imagen',
-      instructor: 'Dr. Hernández',
-      category: 'Diagnóstico',
-      progress: 0,
-      status: 'upcoming',
-      thumbnail: '#607D8B',
-      timeRemaining: '60h total',
-      badge: 'Nuevo'
+      title: 'Ecografía Ginecológica',
+      instructor: 'Dra. Sánchez',
+      progress: 85,
+      category: 'Especializado',
+      thumbnail: '#E91E63',
+      status: 'active',
+      timeRemaining: '15h',
+      dueDate: '5 días'
     },
     {
       id: '6',
-      title: 'Anatomía Radiológica Avanzada',
-      instructor: 'Dra. Morales',
-      category: 'Anatomía',
-      progress: 15,
-      status: 'active',
-      thumbnail: '#795548',
-      timeRemaining: '38h restantes',
-      nextDeadline: '7 días',
-      badge: 'En progreso'
+      title: 'Patologías Hepáticas',
+      instructor: 'Dr. Torres',
+      progress: 100,
+      category: 'Diagnóstico',
+      thumbnail: '#3F51B5',
+      status: 'completed',
+      timeRemaining: '0h',
+      dueDate: 'Completado'
     }
   ];
 
   filteredCourses: Course[] = [];
+  activeFilter: string = 'all';
+  categoryFilter: string = 'all';
+  searchQuery: string = '';
 
   constructor(private router: Router) {}
 
   ngOnInit(): void {
-    this.filteredCourses = this.courses;
+    this.filteredCourses = [...this.courses];
   }
 
-  onFilterChange(filter: string): void {
+  filterCourses(): void {
+    this.filteredCourses = this.courses.filter(course => {
+      const matchesStatus = this.activeFilter === 'all' || 
+        (this.activeFilter === 'active' && course.progress > 0 && course.progress < 100) ||
+        (this.activeFilter === 'completed' && course.progress === 100) ||
+        (this.activeFilter === 'pending' && course.progress === 0);
+      
+      const matchesCategory = this.categoryFilter === 'all' || course.category === this.categoryFilter;
+      
+      const matchesSearch = this.searchQuery === '' || 
+        course.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        course.instructor.toLowerCase().includes(this.searchQuery.toLowerCase());
+      
+      return matchesStatus && matchesCategory && matchesSearch;
+    });
+  }
+
+  setFilter(filter: string): void {
     this.activeFilter = filter;
-    this.applyFilters();
+    this.filterCourses();
   }
 
-  onCategoryChange(category: string): void {
+  setCategory(category: string): void {
     this.categoryFilter = category;
-    this.applyFilters();
-  }
-
-  onSearchChange(): void {
-    this.applyFilters();
-  }
-
-  applyFilters(): void {
-    let filtered = this.courses;
-
-    // Filtro por estado
-    if (this.activeFilter !== 'all') {
-      filtered = filtered.filter(course => course.status === this.activeFilter);
-    }
-
-    // Filtro por categoría
-    if (this.categoryFilter !== 'all') {
-      filtered = filtered.filter(course => course.category === this.categoryFilter);
-    }
-
-    // Filtro por búsqueda
-    if (this.searchTerm) {
-      const term = this.searchTerm.toLowerCase();
-      filtered = filtered.filter(course => 
-        course.title.toLowerCase().includes(term) ||
-        course.instructor.toLowerCase().includes(term) ||
-        course.category.toLowerCase().includes(term)
-      );
-    }
-
-    this.filteredCourses = filtered;
+    this.filterCourses();
   }
 
   enterCourse(courseId: string): void {
-    this.router.navigate(['/course', courseId]);
+    console.log('Entrando al curso:', courseId);
+    // Esta sería la ruta para el curso detallado
+    this.router.navigate([`/course/${courseId}`]);
   }
 
-  exploreMoreCourses(): void {
+  exploreCourses(): void {
     this.router.navigate(['/explore']);
-  }
-
-  getStatusColor(status: string): string {
-    switch (status) {
-      case 'active': return '#1E73BE';
-      case 'completed': return '#4CAF50';
-      case 'upcoming': return '#FF9800';
-      default: return '#666666';
-    }
-  }
-
-  getBadgeColor(badge: string): string {
-    switch (badge) {
-      case 'En progreso': return '#1E73BE';
-      case 'Completado': return '#4CAF50';
-      case 'Nuevo': return '#FF9800';
-      default: return '#666666';
-    }
   }
 }

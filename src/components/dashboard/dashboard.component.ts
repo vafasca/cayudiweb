@@ -28,17 +28,9 @@ interface Activity {
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
-  currentUser: User | null = null;
-  showUserMenu = false;
-  showNotifications = false;
-  showMessages = false;
-  notificationCount = 3;
-  messageCount = 5;
-
   weeklyProgress = 68;
   studyTime = '12.5h';
   achievementsUnlocked = 8;
-
   activeCourses: Course[] = [
     {
       id: '1',
@@ -65,7 +57,6 @@ export class DashboardComponent implements OnInit {
       thumbnail: '#FF9800'
     }
   ];
-
   upcomingActivities: Activity[] = [
     {
       id: '1',
@@ -91,87 +82,14 @@ export class DashboardComponent implements OnInit {
   ];
 
   constructor(
-    private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
-  ngOnInit(): void {
-    this.currentUser = this.authService.currentUserValue;
-    if (!this.currentUser) {
-      this.router.navigate(['/login']);
-    }
-  }
-
-  toggleUserMenu(): void {
-    this.showUserMenu = !this.showUserMenu;
-    this.showNotifications = false;
-    this.showMessages = false;
-  }
-
-  toggleNotifications(): void {
-    this.showNotifications = !this.showNotifications;
-    this.showUserMenu = false;
-    this.showMessages = false;
-  }
-
-  toggleMessages(): void {
-    this.showMessages = !this.showMessages;
-    this.showUserMenu = false;
-    this.showNotifications = false;
-  }
-
-  closeAllMenus(): void {
-    this.showUserMenu = false;
-    this.showNotifications = false;
-    this.showMessages = false;
-  }
-
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
-  }
+  ngOnInit(): void {}
 
   navigateTo(route: string): void {
-    this.closeAllMenus();
-    
-    // Reemplazar console.log por navegación real
-    switch(route) {
-      case 'dashboard':
-        this.router.navigate(['/dashboard']);
-        break;
-      case 'courses':
-        this.router.navigate(['/courses']); 
-        break;
-      case 'calendar':
-        console.log('Navegando a calendario - componente pendiente');
-        break;
-      case 'evaluations':
-        console.log('Navegando a evaluaciones - componente pendiente');
-        break;
-      case 'certificates':
-        console.log('Navegando a certificados - componente pendiente');
-        break;
-      case 'progress':
-        console.log('Navegando a progreso - componente pendiente');
-        break;
-      case 'community':
-        console.log('Navegando a comunidad - componente pendiente');
-        break;
-      case 'forums':
-        console.log('Navegando a foros - componente pendiente');
-        break;
-      case 'settings':
-        console.log('Navegando a configuración - componente pendiente');
-        break;
-      case 'profile':
-        console.log('Navegando a perfil - componente pendiente');
-        break;
-      case 'explore':
-        console.log('Navegando a explorar cursos - componente pendiente');
-        break;
-      default:
-        console.log('Ruta no configurada:', route);
-    }
+    this.router.navigate([route]);
   }
 
   continueCourse(courseId: string): void {
