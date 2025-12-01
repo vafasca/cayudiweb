@@ -1,0 +1,89 @@
+<div class="calendar-container">
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="page-title">Calendario Académico</h1>
+    </div>
+
+    <div class="month-selector">
+      <button class="nav-btn" (click)="changeMonth(-1)">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M12 4L6 10L12 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div class="month-name">{{ getMonthName(currentMonth) }} {{ currentYear }}</div>
+      <button class="nav-btn" (click)="changeMonth(1)">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M8 4L14 10L8 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="calendar-grid">
+      <div class="day-header">Dom</div>
+      <div class="day-header">Lun</div>
+      <div class="day-header">Mar</div>
+      <div class="day-header">Mié</div>
+      <div class="day-header">Jue</div>
+      <div class="day-header">Vie</div>
+      <div class="day-header">Sáb</div>
+      
+      <!-- Días vacíos antes del primer día del mes -->
+      <div *ngFor="let i of [].constructor(firstDayOfMonth)" class="day-cell empty"></div>
+      
+      <!-- Días del mes -->
+      <div *ngFor="let day of daysInMonth" 
+           class="day-cell" 
+           [class.today]="isToday(day)" 
+           (click)="openDayModal(day)">
+        <div class="day-number" [class.today]="isToday(day)">{{ day }}</div>
+        <div class="day-events">
+          <div *ngFor="let event of getEventsForDay(day)" 
+               class="event-badge" 
+               [class]="event.type"
+               (click)="selectEvent(event); $event.stopPropagation()">
+            {{ event.title }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <!-- Modal de día -->
+  <div *ngIf="selectedDay" class="modal-overlay" (click)="closeDayModal()">
+    <div class="day-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="modal-title">{{ selectedDay }} de {{ getMonthName(currentMonth) }}, {{ currentYear }}</h2>
+        <button class="modal-close" (click)="closeDayModal()">&times;</button>
+      </div>
+      <div class="modal-content">
+        <div *ngIf="dayEvents.length > 0; else noEvents">
+          <div class="day-events-list">
+            <div *ngFor="let event of dayEvents" class="event-card" [class]="event.type">
+              <div class="event-time">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M8 5v3l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                <span>{{ formatTime(event.start) }} - {{ formatTime(event.end) }}</span>
+              </div>
+              <h3 class="event-title">{{ event.title }}</h3>
+              <p class="event-description">{{ event.description }}</p>
+              <div *ngIf="event.course" class="event-course">Curso: {{ event.course }}</div>
+            </div>
+          </div>
+        </div>
+        <ng-template #noEvents>
+          <div class="no-events">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+              <circle cx="24" cy="24" r="20" stroke="#1E73BE" stroke-width="2" fill="none"/>
+              <path d="M24 12v12l8 8" stroke="#1E73BE" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <h3 style="font-size: 18px; font-weight: 600; color: #333333; margin: 16px 0 8px 0;">No hay eventos programados</h3>
+            <p style="color: #666666; font-size: 14px;">Este día no tiene actividades académicas registradas</p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>

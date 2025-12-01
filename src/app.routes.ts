@@ -5,6 +5,7 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { Courses } from './components/courses/courses';
 import { Layout } from './components/layout/layout';
 import { authGuard } from './app/guards/auth-guard';
+import { Calendar } from './components/calendar/calendar';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -15,15 +16,15 @@ export const routes: Routes = [
     component: Layout,
     canActivate: [authGuard],
     children: [
-      { path: 'dashboard', component: DashboardComponent },
-      { path: 'courses', component: Courses },
-      { path: 'calendar', component: DashboardComponent }, // Temporal, reemplazar con componente real
-      { path: 'evaluations', component: DashboardComponent }, // Temporal
-      { path: 'certificates', component: DashboardComponent }, // Temporal
-      { path: 'progress', component: DashboardComponent }, // Temporal
-      { path: 'community', component: DashboardComponent }, // Temporal
-      { path: 'forums', component: DashboardComponent }, // Temporal
-      { path: 'settings', component: DashboardComponent }, // Temporal
+      { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
+      { path: 'courses', component: Courses, canActivate: [authGuard] },
+      { path: 'calendar', component: Calendar, canActivate: [authGuard] },
+      { path: 'evaluations', component: DashboardComponent },
+      { path: 'certificates', component: DashboardComponent },
+      { path: 'progress', component: DashboardComponent },
+      { path: 'community', component: DashboardComponent }, 
+      { path: 'forums', component: DashboardComponent },
+      { path: 'settings', component: DashboardComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
