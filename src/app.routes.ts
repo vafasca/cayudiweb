@@ -6,6 +6,7 @@ import { Courses } from './components/courses/courses';
 import { Layout } from './components/layout/layout';
 import { authGuard } from './app/guards/auth-guard';
 import { Calendar } from './components/calendar/calendar';
+import { CertificateComponent } from './components/certificate/certificate';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -20,7 +21,7 @@ export const routes: Routes = [
       { path: 'courses', component: Courses, canActivate: [authGuard] },
       { path: 'calendar', component: Calendar, canActivate: [authGuard] },
       { path: 'evaluations', component: DashboardComponent },
-      { path: 'certificates', component: DashboardComponent },
+      { path: 'certificates', component: CertificateComponent },
       { path: 'progress', component: DashboardComponent },
       { path: 'community', component: DashboardComponent }, 
       { path: 'forums', component: DashboardComponent },
