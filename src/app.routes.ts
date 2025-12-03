@@ -7,6 +7,7 @@ import { Layout } from './components/layout/layout';
 import { authGuard } from './app/guards/auth-guard';
 import { Calendar } from './components/calendar/calendar';
 import { CertificateComponent } from './components/certificate/certificate';
+import { Progress } from './components/progress/progress';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -22,7 +23,7 @@ export const routes: Routes = [
       { path: 'calendar', component: Calendar, canActivate: [authGuard] },
       { path: 'evaluations', component: DashboardComponent },
       { path: 'certificates', component: CertificateComponent },
-      { path: 'progress', component: DashboardComponent },
+      { path: 'progress', component: Progress },
       { path: 'community', component: DashboardComponent }, 
       { path: 'forums', component: DashboardComponent },
       { path: 'settings', component: DashboardComponent },

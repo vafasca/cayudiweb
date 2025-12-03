@@ -1,0 +1,369 @@
+<div class="course-container">
+  <header class="course-header">
+    <div class="header-content">
+      <button class="back-btn" (click)="navigateBack()">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M12 4L6 10L12 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        Mis Cursos
+      </button>
+      <div class="header-actions">
+        <button class="action-btn" *ngIf="course.certificateProgress === 100">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+            <path d="M10 13V3M10 13L7 10M10 13L13 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M3 17h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Certificado
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="course-layout">
+    <aside class="sidebar">
+      <div class="course-info">
+        <div class="course-badge">{{ course.category }}</div>
+        <h1 class="course-title">{{ course.title }}</h1>
+
+        <div class="instructor">
+          <div class="instructor-avatar">{{ course.instructorAvatar }}</div>
+          <div>
+            <div class="instructor-name">{{ course.instructor }}</div>
+            <div class="instructor-role">Instructor Principal</div>
+          </div>
+        </div>
+
+        <div class="progress-section">
+          <div class="progress-header">
+            <span class="progress-label">Progreso del curso</span>
+            <span class="progress-value">{{ course.overallProgress }}%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="course.overallProgress"></div>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat">
+            <div class="stat-value">{{ course.totalDuration }}</div>
+            <div class="stat-label">Duración total</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">{{ course.totalModules }}</div>
+            <div class="stat-label">Módulos</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">{{ calculateTimeUntilCompletion() }}</div>
+            <div class="stat-label">Tiempo restante</div>
+          </div>
+        </div>
+
+        <div class="certificate-status" *ngIf="course.hasCertificate">
+          <div class="certificate-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="certificate-info">
+            <div class="certificate-label">Certificación disponible</div>
+            <div class="certificate-progress">{{ course.certificateProgress }}% completado</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modules-container">
+        <div class="modules-header">
+          <h2>Contenido del curso</h2>
+          <p>{{ course.totalModules }} módulos • {{ course.totalLessons }} lecciones</p>
+        </div>
+
+        <div class="modules-list">
+          <div class="module" *ngFor="let module of course.modules" [class.expanded]="module.isExpanded">
+            <div class="module-header" (click)="toggleModule(module)">
+              <div class="module-info">
+                <div class="module-status" [class.completed]="module.progress === 100">
+                  <span *ngIf="module.progress === 100">✓</span>
+                  <span *ngIf="module.progress < 100">{{ module.progress }}%</span>
+                </div>
+                <div class="module-details">
+                  <h3>{{ module.title }}</h3>
+                  <p>{{ module.lessons.length }} lecciones • {{ module.duration }}</p>
+                </div>
+              </div>
+              <svg class="expand-icon" [class.expanded]="module.isExpanded" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M6 8l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+
+            <div class="lessons" *ngIf="module.isExpanded">
+              <div class="lesson"
+                   *ngFor="let lesson of module.lessons"
+                   [class.active]="activeLesson?.id === lesson.id"
+                   [class.completed]="lesson.completed"
+                   (click)="selectLesson(lesson, module)">
+                <div class="lesson-icon">{{ getLessonIcon(lesson.type) }}</div>
+                <div class="lesson-info">
+                  <div class="lesson-title">{{ lesson.title }}</div>
+                  <div class="lesson-meta">
+                    <span class="lesson-type">{{ getLessonTypeText(lesson.type) }}</span>
+                    <span class="lesson-duration">{{ lesson.duration }}</span>
+                  </div>
+                </div>
+                <button class="lesson-check"
+                        (click)="toggleLessonCompletion(lesson, module); $event.stopPropagation()"
+                        [class.completed]="lesson.completed">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path d="M11 4L5.5 10L3 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                </button>
+              </div>
+
+              <div class="module-exam" *ngIf="module.hasExam && course.showExams && module.examEnabled">
+                <div class="exam-content">
+                  <div class="exam-icon">✓</div>
+                  <div class="exam-info">
+                    <div class="exam-title">Evaluación del módulo</div>
+                    <div class="exam-description">Examen opcional disponible</div>
+                  </div>
+                  <button class="exam-btn" (click)="startExam(module)">Comenzar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div class="lesson-viewer" *ngIf="activeLesson">
+        <div class="viewer-header">
+          <div class="lesson-badge">{{ getLessonTypeText(activeLesson.type) }}</div>
+          <h2 class="lesson-title">{{ activeLesson.title }}</h2>
+          <p class="lesson-description" *ngIf="activeLesson.description">{{ activeLesson.description }}</p>
+        </div>
+
+        <div class="viewer-content">
+          <div class="content-video" *ngIf="activeLesson.type === 'video'">
+            <div class="video-player">
+              <div class="video-screen">
+                <div class="play-overlay">
+                  <div class="play-btn">▶</div>
+                </div>
+              </div>
+              <div class="video-controls">
+                <div class="video-progress">
+                  <div class="video-progress-fill" style="width: 35%"></div>
+                </div>
+                <div class="video-actions">
+                  <button class="control-btn">⏮</button>
+                  <button class="control-btn play">⏯</button>
+                  <button class="control-btn">⏭</button>
+                  <span class="time">00:00 / {{ activeLesson.duration }}</span>
+                  <div class="speed-selector">
+                    <button class="speed-btn" (click)="showSpeedOptions = !showSpeedOptions">
+                      {{ playbackSpeed }}x
+                    </button>
+                    <div class="speed-menu" *ngIf="showSpeedOptions">
+                      <button (click)="setPlaybackSpeed(0.5)">0.5x</button>
+                      <button (click)="setPlaybackSpeed(0.75)">0.75x</button>
+                      <button (click)="setPlaybackSpeed(1.0)" class="active">1.0x</button>
+                      <button (click)="setPlaybackSpeed(1.25)">1.25x</button>
+                      <button (click)="setPlaybackSpeed(1.5)">1.5x</button>
+                      <button (click)="setPlaybackSpeed(2.0)">2.0x</button>
+                    </div>
+                  </div>
+                  <button class="control-btn">⛶</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="content-text" *ngIf="activeLesson.type === 'text'">
+            <div class="text-viewer">
+              <div class="text-content">
+                <p>{{ activeLesson.description }}</p>
+                <p>Este contenido de texto educativo proporciona información detallada sobre el tema. Aquí encontrarás explicaciones paso a paso, conceptos clave y ejemplos prácticos que complementan los videos y otros materiales del curso.</p>
+
+                <h3>Puntos importantes</h3>
+                <ul>
+                  <li>Conceptos fundamentales explicados de manera clara y concisa</li>
+                  <li>Ejemplos prácticos aplicables a situaciones reales</li>
+                  <li>Referencias a material complementario para profundizar</li>
+                  <li>Ejercicios y actividades para reforzar el aprendizaje</li>
+                </ul>
+
+                <p>Puedes leer este contenido a tu propio ritmo y volver a consultarlo cuando lo necesites. Toma notas de los puntos más importantes para facilitar tu estudio.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="content-pdf" *ngIf="activeLesson.type === 'pdf'">
+            <div class="pdf-viewer">
+              <div class="pdf-toolbar">
+                <h3>{{ activeLesson.title }}</h3>
+                <button class="download-btn" (click)="downloadResource(activeLesson)">
+                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                    <path d="M10 13V3M10 13L7 10M10 13L13 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M3 17h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                  Descargar PDF
+                </button>
+              </div>
+              <div class="pdf-preview">
+                <div class="pdf-page">
+                  <h4>{{ activeLesson.title }}</h4>
+                  <p class="pdf-subtitle">Material educativo complementario</p>
+                  <div class="pdf-content">
+                    <p>Este documento PDF contiene información detallada, diagramas explicativos e imágenes de alta calidad para apoyar tu aprendizaje.</p>
+                    <p>Puedes descargarlo para consultarlo sin conexión o imprimirlo para estudiar en cualquier momento.</p>
+                    <div class="pdf-features">
+                      <div class="feature-item">
+                        <span class="feature-icon">🖼</span>
+                        <span>Imágenes en alta resolución</span>
+                      </div>
+                      <div class="feature-item">
+                        <span class="feature-icon">📊</span>
+                        <span>Gráficos y diagramas</span>
+                      </div>
+                      <div class="feature-item">
+                        <span class="feature-icon">✍</span>
+                        <span>Ejercicios prácticos</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="content-quiz" *ngIf="activeLesson.type === 'quiz'">
+            <div class="quiz-viewer">
+              <div class="quiz-info-box">
+                <div class="quiz-stat">
+                  <span class="stat-icon">⏱</span>
+                  <span>{{ activeLesson.duration }}</span>
+                </div>
+                <div class="quiz-stat">
+                  <span class="stat-icon">❓</span>
+                  <span>20 preguntas</span>
+                </div>
+                <div class="quiz-stat">
+                  <span class="stat-icon">🎯</span>
+                  <span>70% mínimo</span>
+                </div>
+              </div>
+
+              <div class="quiz-instructions">
+                <h3>Sobre esta evaluación</h3>
+                <ul>
+                  <li>Esta evaluación es <strong>completamente opcional</strong></li>
+                  <li>Puedes realizarla cuantas veces necesites</li>
+                  <li>No hay límite de tiempo estricto</li>
+                  <li>Recibirás retroalimentación detallada al finalizar</li>
+                </ul>
+              </div>
+
+              <div class="quiz-actions">
+                <button class="primary-btn">Comenzar evaluación</button>
+                <button class="secondary-btn">Ver preguntas de muestra</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="content-practice" *ngIf="activeLesson.type === 'practice'">
+            <div class="practice-viewer">
+              <div class="practice-card">
+                <div class="practice-icon">🔬</div>
+                <div class="practice-content">
+                  <h3>Actividad práctica</h3>
+                  <p>{{ activeLesson.description }}</p>
+                  <p>Aplica los conocimientos adquiridos en un escenario realista. Analiza las situaciones presentadas y proporciona tus respuestas basándote en lo aprendido.</p>
+                </div>
+              </div>
+              <div class="practice-actions">
+                <button class="primary-btn">Iniciar práctica</button>
+                <button class="secondary-btn">Material de apoyo</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="viewer-footer">
+          <button class="next-lesson-btn" (click)="goToNextLesson()" *ngIf="getNextLesson()">
+            Siguiente lección
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+              <path d="M8 4l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="resources-sidebar" [class.show]="showResourcesPanel">
+        <div class="sidebar-header">
+          <h3>Recursos</h3>
+          <button class="close-btn" (click)="toggleResourcesPanel()">×</button>
+        </div>
+        <div class="resources-list">
+          <div class="resource-item">
+            <div class="resource-icon">📄</div>
+            <div class="resource-info">
+              <div class="resource-title">Guía de ultrasonido</div>
+              <div class="resource-meta">PDF • 45 páginas</div>
+            </div>
+            <button class="resource-btn">↓</button>
+          </div>
+          <div class="resource-item">
+            <div class="resource-icon">🖼</div>
+            <div class="resource-info">
+              <div class="resource-title">Atlas anatómico</div>
+              <div class="resource-meta">Galería • 120 imágenes</div>
+            </div>
+            <button class="resource-btn">↓</button>
+          </div>
+          <div class="resource-item">
+            <div class="resource-icon">🎬</div>
+            <div class="resource-info">
+              <div class="resource-title">Técnicas avanzadas</div>
+              <div class="resource-meta">Video • 25 min</div>
+            </div>
+            <button class="resource-btn">▶</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="notes-sidebar" [class.show]="showNotesPanel">
+        <div class="sidebar-header">
+          <h3>Mis notas</h3>
+          <button class="close-btn" (click)="toggleNotesPanel()">×</button>
+        </div>
+        <div class="notes-editor">
+          <textarea [(ngModel)]="userNote" placeholder="Escribe tus notas aquí..."></textarea>
+          <button class="add-note-btn" (click)="addNote()">Agregar nota</button>
+        </div>
+        <div class="notes-list">
+          <div class="note-item" *ngFor="let note of notes; let i = index">
+            <div class="note-text">{{ note }}</div>
+            <button class="delete-note-btn" (click)="deleteNote(i)">×</button>
+          </div>
+          <div class="empty-state" *ngIf="notes.length === 0">
+            <p>No hay notas todavía</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="floating-actions">
+    <button class="floating-btn" [class.active]="showNotesPanel" (click)="toggleNotesPanel()" title="Notas">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M4 6h12M4 10h12M4 14h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <button class="floating-btn" [class.active]="showResourcesPanel" (click)="toggleResourcesPanel()" title="Recursos">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M3 6l7-3 7 3v8l-7 3-7-3V6z" stroke="currentColor" stroke-width="2"/>
+      </svg>
+    </button>
+  </div>
+</div>
