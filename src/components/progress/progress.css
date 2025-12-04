@@ -625,6 +625,12 @@
   align-items: center;
   justify-content: center;
   background: rgba(0, 0, 0, 0.3);
+  z-index: 10;
+  transition: opacity 0.3s ease;
+}
+
+.play-overlay:hover {
+  background: rgba(0, 0, 0, 0.4);
 }
 
 .play-btn {
@@ -653,26 +659,57 @@
   padding: 20px;
 }
 
+.video-progress-container {
+  position: relative;
+  margin-bottom: 16px;
+}
+
 .video-progress {
+  width: 100%;
   height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
   background: #e2e8f0;
   border-radius: 10px;
-  margin-bottom: 16px;
-  overflow: hidden;
+  outline: none;
   cursor: pointer;
 }
 
-.video-progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-  border-radius: 10px;
-  transition: width 0.3s;
+.video-progress::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #667eea;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(102, 126, 234, 0.5);
+}
+
+.video-progress::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #667eea;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 6px rgba(102, 126, 234, 0.5);
+}
+
+.progress-time {
+  position: absolute;
+  top: -25px;
+  right: 0;
+  font-size: 12px;
+  color: #718096;
+  font-weight: 600;
 }
 
 .video-actions {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 .control-btn {
@@ -699,13 +736,7 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border: none;
   color: white;
-}
-
-.time {
-  font-size: 13px;
-  color: #718096;
-  font-weight: 600;
-  margin-left: auto;
+  font-size: 18px;
 }
 
 .speed-selector {
@@ -740,6 +771,7 @@
   margin-bottom: 8px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   min-width: 120px;
+  z-index: 20;
 }
 
 .speed-menu button {
@@ -764,6 +796,42 @@
 .speed-menu button.active {
   background: #667eea;
   color: white;
+}
+
+.volume-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.volume-slider {
+  width: 80px;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: #e2e8f0;
+  border-radius: 10px;
+  outline: none;
+  cursor: pointer;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #667eea;
+  cursor: pointer;
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #667eea;
+  cursor: pointer;
+  border: none;
 }
 
 .text-viewer {
@@ -1182,6 +1250,11 @@
   color: #a0aec0;
 }
 
+.resource-actions {
+  display: flex;
+  gap: 6px;
+}
+
 .resource-btn {
   width: 32px;
   height: 32px;
@@ -1199,10 +1272,23 @@
   color: #667eea;
 }
 
+.resource-btn.view {
+  color: #48bb78;
+}
+
+.resource-btn.download {
+  color: #667eea;
+}
+
 .resource-btn:hover {
   background: #667eea;
   color: white;
   border-color: #667eea;
+}
+
+.resource-btn.view:hover {
+  background: #48bb78;
+  border-color: #48bb78;
 }
 
 .notes-editor {
@@ -1260,6 +1346,7 @@
   background: #f7fafc;
   border-radius: 12px;
   margin-bottom: 12px;
+  align-items: flex-start;
 }
 
 .note-text {
@@ -1281,6 +1368,9 @@
   cursor: pointer;
   transition: all 0.2s;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .delete-note-btn:hover {
@@ -1292,6 +1382,12 @@
   text-align: center;
   padding: 60px 20px;
   color: #a0aec0;
+}
+
+.empty-hint {
+  font-size: 12px;
+  margin-top: 8px;
+  color: #cbd5e0;
 }
 
 .floating-actions {
@@ -1391,6 +1487,20 @@
 
   .viewer-content {
     padding: 20px;
+  }
+
+  .video-actions {
+    gap: 8px;
+  }
+
+  .control-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+
+  .volume-slider {
+    width: 60px;
   }
 
   .stats-grid {
